@@ -1,0 +1,127 @@
+{% if user_info('get_is_auth') %}
+
+{% set list_of_packs = get_starter_packs() %}
+{% set contain_characters = false %}
+{% set accounts = get_account_players() %}
+{% for account_name, players in accounts %}
+    {% for player in players %}
+    {% set contain_characters = true %}
+    {% endfor %}
+{% endfor %}
+
+{% if list_of_packs is not null %}
+<div class="content">
+
+<div class="block block-rounded">
+    <div class="block-content block-content-full">
+        <div class="py-3 text-center">
+            <h1 class="h3 fw-extrabold mb-1">
+                Стартовые наборы
+            </h1>
+            <h2 class="fs-sm fw-medium text-muted mb-0">
+                Приобрети набор для комфортного старта на сервере
+            </h2>
+        </div>
+    </div>
+</div>
+
+<div class="row text-center">
+    {% for i,pack in list_of_packs %}
+    <div class="col-md-6 col-xl-4 d-flex flex-column align-items-stretch">
+        <a class="block block-link-pop block-rounded block-bordered text-center d-flex flex-column h-100">
+            <div class="block-header">
+                <img class="img-avatar img-avatar-thumb img-avatar-rounded" src="{{(pack.icon)}}" alt="">
+                <h3 class="block-title badge bg-black-25 text-uppercase fw-bold mx-4 py-1 px-3">
+                    {{pack.name}}
+                </h3>
+            </div>
+            <div class="block-content bg-body-light">
+                <div class="fw-semibold mb-3">
+                    {% if pack.cost_discount == pack.cost %}
+                    <span class="h1 fw-semibold">{{pack.cost}}</span>
+                    {% else %}
+                      <sub><s>{{pack.cost}}</s></sub>
+                      <span class="h1 fw-semibold">{{pack.cost_discount}}</span>
+                    {% endif %}
+              </div>
+            </div>
+            <div class="block-content">
+                <table class="table table-responsive">
+                    {% for j,item in pack.items %}
+                    <tr>
+                        <td class="text-end">
+                            <p class="m-0">
+                                <img class="img-avatar img-avatar32 rounded" src="{{(item.icon)}}" alt="">
+                            </p>
+                        </td>
+                        <td class="text-start">
+                            {% if item.enchant %}+{{item.enchant}}{% endif %} {{item.name}} {% if item.item_count != 1 %}x {{item.item_count}}{% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="block-content block-content-full bg-body-light mt-auto">
+                <span data-product-id="{{pack.product_id}}" data-pack-name="{{(pack.name)}}" data-pack-cost="{{(pack.cost_discount)}}" data-bs-toggle="modal" data-bs-target="#modal_panel_apply" class="btn btn-primary rounded px-4 py-2 open_modal_pack openWindowBuyPack">{{phrase(74)}}</span>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+</div>
+
+<div class="modal fade" id="modal_panel_apply" tabindex="-1" role="dialog" aria-labelledby="modal_panel_apply" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="block block-rounded shadow-none mb-0">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">{{phrase(75)}}</h3>
+                    <div class="block-options">
+                        <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="block-content fs-sm">
+
+                    {% if contain_characters > 0 %}
+                    <p>{{phrase(76)}}</p>
+                    <div class="form-group row">
+                        <label for="char_name" class="col-sm-3 col-form-label">{{phrase(77)}}</label>
+                        <select id="char_name" class="form-control single-select">
+                            {% for account_name, players in accounts %}
+                            <optgroup label="{{phrase(480)}}: {{account_name}}">
+                                {% for player in players %}
+                                <option value="{{player}}">{{player}}</option>
+                                {% endfor %}
+                            </optgroup>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <hr>
+                    {% endif %}
+                    <p>
+                        {{phrase(78)}}: <span id="user_name_buy"></span><br>
+                        {{phrase(72)}}: <span id="user_worth_buy"></span> {{phrase(68)}}
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i>
+                        {{phrase("cancel")}}
+                    </button>
+                    <button id="buy_pack" data-server_id="{{ get_server_default().id }}" type="button" class="btn btn-success"><i class="fa fa-check-square-o"></i>
+                        {{phrase(81)}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/src/component/plugins/sphere_starter_packs/tpl/js/starter_packs.js"></script>
+
+{% endif %}
+
+{% endif %}
