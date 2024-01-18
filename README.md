@@ -1,4 +1,4 @@
-# SphereWeb CMS: Streams Plugin
+# SphereWeb CMS: Starter Packs Plugin
 
 Starter packs plugin for SphereWeb CMS.
 
